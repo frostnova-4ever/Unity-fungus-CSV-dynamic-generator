@@ -867,7 +867,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 1
-  scrollPos: {x: 315, y: 99}
+  scrollPos: {x: -154.22403, y: 108.015594}
   variablesScrollPos: {x: 0, y: 0}
   variablesExpanded: 1
   blockViewHeight: 400
@@ -879,7 +879,7 @@ MonoBehaviour:
     width: 1114
     height: 859
   selectedBlocks:
-  - {fileID: 1289520255}
+  - {fileID: 1289520274}
   selectedCommands: []
   variables: []
   description: 
@@ -933,8 +933,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeRect:
     serializedVersion: 2
-    x: 194
-    y: 182
+    x: 401.9545
+    y: 153.59094
     width: 104
     height: 40
   tint: {r: 1, g: 1, b: 1, a: 1}
@@ -994,7 +994,7 @@ MonoBehaviour:
   indentLevel: 0
   storyText: hello
   description: 
-  character: {fileID: 0}
+  character: {fileID: 2015005455}
   portrait: {fileID: 0}
   voiceOverClip: {fileID: 0}
   showAlways: 1
@@ -1354,6 +1354,7 @@ MonoBehaviour:
   keywords:
   - Actor
   - "\u89D2\u8272"
+  fungusCharacterList: []
 --- !u!114 &1289520270
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1595,6 +1596,10 @@ MonoBehaviour:
   flowchart: {fileID: 1289520253}
   blockName: dialogue1
   targetTag: Player
+  start: 0
+  trigger: 1
+  collision: 0
+  value: 0
   isTalking: 0
 --- !u!65 &1832022014
 BoxCollider:
