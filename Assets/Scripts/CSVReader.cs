@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -166,7 +166,7 @@ public static class CSVReader
         for (int i = 0; i < csvData.Count; i++)
         {
             List<string> row = csvData[i];
-            bool isEmptyRow = true;// 检查是否为空行
+            bool isEmptyRow = true;
             foreach (string cell in row)
             {
                 if (!string.IsNullOrWhiteSpace(cell))
@@ -175,6 +175,10 @@ public static class CSVReader
                     break;
                 }
             }
+            
+            // 检查是否包含关键词（用于识别新块的开始）
+            bool containsKeywords = IsRowContainsKeywords(row, keywords);
+            
             // 如果遇到空行且已经找到关键词序列，则结束读取
             if (isEmptyRow && foundKeywords)
             {
@@ -184,12 +188,24 @@ public static class CSVReader
                 entry = new DialogueEntry();
                 foundKeywords = false;
             }
-            if (!foundKeywords)
+            // 如果找到新的关键词且当前块还没保存，保存当前块
+            else if (containsKeywords && foundKeywords)
             {
-                // 检查当前行是否包含按顺序排列的关键词
-                if (IsRowMatchKeywords(row, keywords))
+                entry.rows = resultData;
+                entryList.Add(entry);
+                resultData = new List<List<string>>();
+                entry = new DialogueEntry();
+                
+                entry.blockName = ExtractBlockName(row);
+                foundKeywords = true;
+                if (i + 1 < csvData.Count)
+                    i++;
+            }
+            else if (!foundKeywords)
+            {
+                if (containsKeywords)
                 {
-                    entry.blockName = string.Join("", row.Take(3));
+                    entry.blockName = ExtractBlockName(row);
                     foundKeywords = true;
                     if (i + 1 < csvData.Count)
                         i++;//跳属性行
@@ -197,11 +213,44 @@ public static class CSVReader
             }
             else
             {
-                // 已经找到关键词序列，直接添加
                 resultData.Add(new List<string>(row));
             }
         }
+        
+        // 保存最后一个块
+        if (foundKeywords && resultData.Count > 0)
+        {
+            entry.rows = resultData;
+            entryList.Add(entry);
+        }
+        
         return entryList;
+    }
+
+    // 辅助函数：检查一行是否包含所有关键词
+    private static bool IsRowContainsKeywords(List<string> row, List<string> keywords)
+    {
+        if (row.Count < keywords.Count) return false;
+        int matchCount = 0;
+        for (int i = 0; i < row.Count && matchCount < keywords.Count; i++)
+        {
+            string cell = row[i].Trim();
+            if (cell == keywords[matchCount])
+            {
+                matchCount++;
+            }
+        }
+        return matchCount == keywords.Count;
+    }
+
+    // 从块标记行提取块名称
+    private static string ExtractBlockName(List<string> row)
+    {
+        if (row.Count >= 2 && !string.IsNullOrEmpty(row[0]) && !string.IsNullOrEmpty(row[1]))
+        {
+            return row[0] + row[1];
+        }
+        return row[0] ?? "";
     }
 
     // 辅助函数：检查一行是否按顺序包含所有关键词
